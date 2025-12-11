@@ -123,103 +123,6 @@ public class PeerImpl extends UnicastRemoteObject implements PeerService {
         return inGame;
     }
 
-    /**
-     * Richiesta di instaurare un match da parte di un altro peer.
-     * Accetta solo se:
-     * - questo peer non è già in partita;
-     * - questo peer partecipa ancora al matchmaking;
-     * - l'id del proponente è lessicograficamente minore (symmetry breaking).
-     */
-    @Override
-    public synchronized boolean proposeMatch(String proposerId) throws RemoteException {
-        if (inGame || !lookingForMatches) {
-            return false;
-        }
-        // Rompiamo la simmetria accettando solo se proposerId < myId
-        if (!(proposerId.compareTo(myId) < 0)) {
-            return false;
-        }
-        try {
-            PeerService prop = (PeerService) Naming.lookup("rmi://" + proposerId + "/peer");
-            this.opponent = prop;
-            this.opponentId = proposerId;
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    /**
-     * Conferma di un match precedentemente proposto.
-     * Inizializza lo stato di gioco (simbolo, token, avversario) e,
-     * se questo peer possiede il token, avvia il ciclo di gioco locale.
-     */
-    @Override
-    public synchronized void confirmMatch(String opponentId,
-                                          boolean iStartWithToken,
-                                          char mySymbol) throws RemoteException {
-        if (inGame || !lookingForMatches) {
-            return;
-        }
-        this.inGame = true;
-        this.mySymbol = mySymbol;
-        this.hasToken = iStartWithToken;
-        this.opponentId = opponentId;
-
-        try {
-            this.opponent = (PeerService) Naming.lookup("rmi://" + opponentId + "/peer");
-        } catch (Exception e) {
-            // Avversario non raggiungibile: annullo il match
-            this.inGame = false;
-            this.opponent = null;
-            this.opponentId = null;
-            return;
-        }
-
-        System.out.println("Match avviato con " + opponentId
-                + " | mio simbolo: " + mySymbol
-                + " | token: " + hasToken);
-
-        if (hasToken) {
-            exec.execute(this::playTurnLoop);
-        }
-    }
-
-    /**
-     * Chiamato dall'avversario quando questo peer deve ricevere il token
-     * e giocare il proprio turno.
-     */
-    @Override
-    public synchronized void receiveToken() throws RemoteException {
-        if (!inGame) {
-            return;
-        }
-        hasToken = true;
-        exec.execute(this::playTurnLoop);
-    }
-
-    /**
-     * Aggiorna localmente la board con la mossa ricevuta dall'avversario.
-     * Se il risultato indica fine partita, delega la gestione ai thread interni.
-     */
-    @Override
-    public synchronized void updateMove(int row, int col, char symbol, char result) throws RemoteException {
-        if (!inGame) {
-            return;
-        }
-
-        if (board.isValid(row, col)) {
-            board.apply(row, col, symbol);
-        }
-        System.out.println("Mossa avversario: " + (row + 1) + " " + (col + 1));
-
-        if (result != ' ') {
-            // La partita è terminata: gestisco fine partita su un thread separato
-            final char resCopy = result;
-            exec.execute(() -> announceResultAndHandleEnd(resCopy));
-        }
-        // Se la partita non è finita, il token verrà passato via receiveToken()
-    }
 
     // ========================================================================
     // Matchmaking distribuito
@@ -320,6 +223,105 @@ public class PeerImpl extends UnicastRemoteObject implements PeerService {
             }
         } catch (Exception ignored) {
         }
+    }
+
+    
+    /**
+     * Richiesta di instaurare un match da parte di un altro peer.
+     * Accetta solo se:
+     * - questo peer non è già in partita;
+     * - questo peer partecipa ancora al matchmaking;
+     * - l'id del proponente è lessicograficamente minore (symmetry breaking).
+     */
+    @Override
+    public synchronized boolean proposeMatch(String proposerId) throws RemoteException {
+        if (inGame || !lookingForMatches) {
+            return false;
+        }
+        // Rompiamo la simmetria accettando solo se proposerId < myId
+        if (!(proposerId.compareTo(myId) < 0)) {
+            return false;
+        }
+        try {
+            PeerService prop = (PeerService) Naming.lookup("rmi://" + proposerId + "/peer");
+            this.opponent = prop;
+            this.opponentId = proposerId;
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * Conferma di un match precedentemente proposto.
+     * Inizializza lo stato di gioco (simbolo, token, avversario) e,
+     * se questo peer possiede il token, avvia il ciclo di gioco locale.
+     */
+    @Override
+    public synchronized void confirmMatch(String opponentId,
+                                          boolean iStartWithToken,
+                                          char mySymbol) throws RemoteException {
+        if (inGame || !lookingForMatches) {
+            return;
+        }
+        this.inGame = true;
+        this.mySymbol = mySymbol;
+        this.hasToken = iStartWithToken;
+        this.opponentId = opponentId;
+
+        try {
+            this.opponent = (PeerService) Naming.lookup("rmi://" + opponentId + "/peer");
+        } catch (Exception e) {
+            // Avversario non raggiungibile: annullo il match
+            this.inGame = false;
+            this.opponent = null;
+            this.opponentId = null;
+            return;
+        }
+
+        System.out.println("Match avviato con " + opponentId
+                + " | mio simbolo: " + mySymbol
+                + " | token: " + hasToken);
+
+        if (hasToken) {
+            exec.execute(this::playTurnLoop);
+        }
+    }
+
+    /**
+     * Chiamato dall'avversario quando questo peer deve ricevere il token
+     * e giocare il proprio turno.
+     */
+    @Override
+    public synchronized void receiveToken() throws RemoteException {
+        if (!inGame) {
+            return;
+        }
+        hasToken = true;
+        exec.execute(this::playTurnLoop);
+    }
+
+    /**
+     * Aggiorna localmente la board con la mossa ricevuta dall'avversario.
+     * Se il risultato indica fine partita, delega la gestione ai thread interni.
+     */
+    @Override
+    public synchronized void updateMove(int row, int col, char symbol, char result) throws RemoteException {
+        if (!inGame) {
+            return;
+        }
+
+        if (board.isValid(row, col)) {
+            board.apply(row, col, symbol);
+        }
+        System.out.println("Mossa avversario: " + (row + 1) + " " + (col + 1));
+
+        if (result != ' ') {
+            // La partita è terminata: gestisco fine partita su un thread separato
+            final char resCopy = result;
+            exec.execute(() -> announceResultAndHandleEnd(resCopy));
+        }
+        // Se la partita non è finita, il token verrà passato via receiveToken()
     }
 
     // ========================================================================

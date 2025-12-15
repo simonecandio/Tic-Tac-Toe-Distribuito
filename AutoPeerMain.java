@@ -22,7 +22,7 @@ public class AutoPeerMain {
      * Avvia un nuovo peer nel sistema.
      *
      * Utilizzo tipico:
-     * {@code java gamep2p.AutoPeerMain localhost 2001}
+     * {@code java gamep2p.AutoPeerMain} o {@code java gamep2p.AutoPeerMain localhost 9800}
      *
      * Gestione degli argomenti:
      * - nessun argomento: host = "localhost", porta scelta automaticamente;
@@ -38,7 +38,6 @@ public class AutoPeerMain {
 
         // Determinazione di host e porta in base agli argomenti
         if (args.length == 0) {
-            //host = "localhost";
             host = InetAddress.getLocalHost().getHostAddress();
             port = findFreePort();
         } else if (args.length == 1) {

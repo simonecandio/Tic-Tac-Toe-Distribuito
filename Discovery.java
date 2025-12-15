@@ -39,7 +39,7 @@ public class Discovery implements AutoCloseable {
     private final ConcurrentHashMap<String, Long> lastSeen = new ConcurrentHashMap<>();
 
     // true = gossip completo (HELLO + GOSSIP + cleaner), false = discovery semplice (solo HELLO)
-    private final boolean ENABLE_GOSSIP = false;
+    private final boolean ENABLE_GOSSIP;
     private static final boolean DEBUG = false;  // attiva/disattiva debug
     private static final int HELLO_PERIOD_MS = 2000;  // 2 secondi tra un HELLO e l'altro
 

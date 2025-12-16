@@ -106,7 +106,6 @@ public class PeerImpl extends UnicastRemoteObject implements PeerService {
 
     // ========================================================================
     // Implementazione PeerService
-    // ========================================================================
 
     @Override
     public boolean ping() {
@@ -126,7 +125,6 @@ public class PeerImpl extends UnicastRemoteObject implements PeerService {
 
     // ========================================================================
     // Matchmaking distribuito
-    // ========================================================================
 
     /**
      * Tenta di trovare e instaurare un match con un altro peer libero.
@@ -326,7 +324,6 @@ public class PeerImpl extends UnicastRemoteObject implements PeerService {
 
     // ========================================================================
     // Logica di gioco (token-based)
-    // ========================================================================
 
     /**
      * Gestisce un turno di gioco quando questo peer possiede il token.
@@ -447,7 +444,6 @@ public class PeerImpl extends UnicastRemoteObject implements PeerService {
 
     // ========================================================================
     // Supporto per chiamate RMI sicure
-    // ========================================================================
 
     /**
      * Interfaccia funzionale per incapsulare una chiamata RMI
@@ -499,7 +495,6 @@ public class PeerImpl extends UnicastRemoteObject implements PeerService {
 
     // ========================================================================
     // Logica di rematch
-    // ========================================================================
 
     /**
      * Gestisce la fase finale di una partita e coordina la possibile rivincita.
@@ -709,7 +704,6 @@ public class PeerImpl extends UnicastRemoteObject implements PeerService {
 
     // ========================================================================
     // Utility di stampa e binding RMI
-    // ========================================================================
 
     /**
      * Stampa a schermo lo stato corrente:

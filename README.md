@@ -238,6 +238,11 @@ javac gamep2p/*.java
 ### Esecuzione
 
 ```bash
+java gamep2p.AutoPeerMain 
+```
+o
+
+```bash
 java gamep2p.AutoPeerMain <host> [porta]
 ```
 

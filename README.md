@@ -10,8 +10,6 @@ un’applicazione **peer-to-peer** per giocare a **tris (tic-tac-toe)** tramite:
 - una gestione del gioco basata su **token logico**
 - un protocollo di **rematch** con coordinatore eletto tramite symmetry breaking
 
-L’applicazione implementa concetti fondamentali degli algoritmi distribuiti:  
-*break symmetry, coordination, distributed objects, failure handling, mini-consensus,* e gestione della membership distribuita.
 
 ---
 
@@ -37,7 +35,7 @@ package gamep2p;
 
 Ogni processo avviato tramite `AutoPeerMain` è un **peer distribuito**:
 
-* espone un oggetto remoto RMI (`PeerService`)
+* espone un oggetto remoto RMI 
 * chiama metodi remoti sugli altri peer
 * partecipa al **discovery distribuito**
 * entra automaticamente nel **matchmaking**
@@ -45,7 +43,7 @@ Ogni processo avviato tramite `AutoPeerMain` è un **peer distribuito**:
 * gestisce la chiusura e il rematch tramite un piccolo protocollo di consenso
 
 Non esiste un server centrale né un’autorità:
-tutti i peer sono identici (*fully peer-to-peer*).
+tutti i peer sono identici 
 
 Ogni peer possiede un identificatore globale:
 
@@ -55,7 +53,7 @@ myId = host:port
 
 utilizzato per:
 
-* romper la simmetria nel matchmaking,
+* rompere la simmetria nel matchmaking,
 * decidere chi inizia la partita,
 * decidere chi coordina la fase di rematch,
 * selezionare in modo deterministico l’avversario.
@@ -249,12 +247,6 @@ Esempio:
 java gamep2p.AutoPeerMain 192.168.1.20 5001
 java gamep2p.AutoPeerMain 192.168.1.20 5002
 ```
-
-Appena i peer si scoprono:
-
-* il matchmaking automatico li abbina
-* parte la partita
-* chi ha ID minore inizia con il simbolo `X`
 
 
 ## Autore

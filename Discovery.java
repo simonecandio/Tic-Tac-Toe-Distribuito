@@ -96,7 +96,7 @@ public class Discovery implements AutoCloseable {
 
     // ============================
     //  SENDER (HELLO + opz. GOSSIP)
-    // ============================
+    
     private void startSender() {
         Thread t = new Thread(() -> {
             while (running) {
@@ -131,7 +131,7 @@ public class Discovery implements AutoCloseable {
 
      // =========================================================
     //          INVIO GOSSIP SOLO QUANDO LA VISTA CAMBIA
-    // =========================================================
+
     private void triggerGossip() {
         if (!ENABLE_GOSSIP || peers.isEmpty()) return;
 
@@ -175,7 +175,7 @@ public class Discovery implements AutoCloseable {
 
     // =======================
     //  RECEIVER (HELLO/GOSSIP)
-    // =======================
+
     private void startReceiver() {
         Thread t = new Thread(() -> {
             byte[] buf = new byte[4096];
@@ -238,7 +238,7 @@ public class Discovery implements AutoCloseable {
 
     // =====================
     //  LOGICA DI GOSSIP
-    // =====================
+
     /**
      * Effettua il merge di una vista ricevuta via GOSSIP.
      * Il payload è del tipo: "id1:ts1,id2:ts2,..."
@@ -331,7 +331,7 @@ public class Discovery implements AutoCloseable {
 
     // =====================
     //  CHIUSURA RISORSE
-    // =====================
+
     /**
      * Chiude il componente di discovery.
      * Ferma i thread di invio e ricezione, lascia il gruppo multicast e
